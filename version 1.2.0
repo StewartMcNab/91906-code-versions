@@ -1,0 +1,90 @@
+#version 1.2.0
+
+import random
+from tkinter import *
+
+num = [1,2,3,4,5,6,7,8,9]
+
+##!Function##!
+#user_entry is the solving entry (solving = entry(app)
+
+def input_validator():
+    
+    if user_input == "":
+        print("user input is blank")
+        warning = Label(app, text="NO BLANKS!", fg="RED", font=("Terminal", 16))
+        warning.place(relx=0.3, rely=0.1)
+
+    elif user_input.isdigit() == False:
+        if user_input.isalnum() == True:
+            print("Alphabet detected")
+            warning = Label(app, text="NO LETTERS!", fg="RED", font=("Terminal", 16))
+            warning.place(relx=0.3, rely=0.1)
+        elif " " in user_input:
+            print("Whitespace detected")
+            warning = Label(app, text="NO WHITESPACE!", fg="RED", font=("Terminal", 16))
+            warning.place(relx=0.3, rely=0.1)
+        else:
+            print("Symbols detected")
+            warning = Label(app, text="NO SYMBOLS!", fg="RED", font=("Terminal", 16))
+            warning.place(relx=0.3, rely=0.1)
+
+        #boundaries
+    elif len(user_input) > 6:
+        print("number limit is 6!")
+        warning = Label(app, text="MAX 6 NUMBERS!", fg="RED", font=("Terminal", 16))
+        warning.place(relx=0.3, rely=0.1)
+    else:
+        return True
+    return False
+
+        
+
+def submt(user_entry):
+    #invalid entries
+    
+    user_input = user_entry.get()
+
+    validity = input_validator(user_input)
+    if validity == True:
+        if user_input == str(resultPLUS()):
+            correct = Label(app, text="correct!", fg="green", font=("Terminal", 16))
+            correct.place(relx=0.3, rely=0.2)
+        else:
+            wrong = Label(app, text="wrong!", fg="red", font=("Terminal", 16))
+            wrong.place(relx=0.3, rely=0.2)
+
+def try_again():
+    try_again.num1update = random.choice(num)
+    try_again.num2update = random.choice(num)
+    question = Label(
+        app, text=f"{try_again.num1update}+{try_again.num2update}", font=("Courier")
+    )
+    question.place(relx=0.16, rely=0.14, relwidth=0.7, relheight=0.23)
+
+def resultPLUS():
+    try_again
+
+    return try_again.num1update + try_again.num2update
+
+
+####!
+
+app = Tk()
+app.title("MathsGame")
+app.geometry("250x300")
+app.resizable(True,True)
+#ajusting the window size and usability
+
+start = Button(app, text="Start Game", bg = "yellow", fg = "red", command=try_again)
+start.place(relx=0.35, rely=0.2)
+
+solving  = Entry(app)
+solving.place(relx=0.35, rely=0.4, relwidth=0.34, relheight=0.23)
+
+submit = Button(app, text="Submit", bg = "lightblue", fg = "darkblue", command=lambda: submt(solving))
+submit.place(relx=0.35, rely=0.64, relwidth=0.34, relheight=0.23)
+
+try_again = Button(app, text="Try Again", bg = "lightgreen", fg = "darkgreen", command=try_again)
+try_again.place(relx=0.39, rely=0.9)
+app.mainloop

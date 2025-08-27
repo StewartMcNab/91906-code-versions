@@ -1,0 +1,118 @@
+#Maths Quiz V 1.5.0
+
+import random
+from tkinter import *
+
+class MathQuizApp:
+    def __init__(self, root):
+        self.root = root
+        root.title("Math Quiz")
+        root.geometry("300x300")
+        
+        self.score = 0
+        self.question_count = 0
+        self.difficulty = "Easy"
+        
+        # MENU FRAME
+        self.menu_frame = Frame(root)
+        self.menu_frame.pack(fill="both", expand=True)
+        Label(self.menu_frame, text="Welcome to Math Quiz!", font=("Arial", 20)).pack(pady=30)
+        Button(self.menu_frame, text="Start", command=self.show_difficulty).pack()
+        
+        # DIFFICULTY FRAME
+        self.diff_frame = Frame(root)
+        Label(self.diff_frame, text="Choose Difficulty", font=("Arial", 18)).pack(pady=20)
+        Button(self.diff_frame, text="Easy", command=lambda: self.start_quiz("Easy")).pack(pady=5)
+        Button(self.diff_frame, text="Medium", command=lambda: self.start_quiz("Medium")).pack(pady=5)
+        Button(self.diff_frame, text="Hard", command=lambda: self.start_quiz("Hard")).pack(pady=5)
+        
+        # QUIZ FRAME
+        self.quiz_frame = Frame(root)
+        self.question_label = Label(self.quiz_frame, text="", font=("Arial", 16))
+        self.question_label.pack(pady=20)
+        
+        self.answer_entry = Entry(self.quiz_frame)
+        self.answer_entry.pack()
+        
+        self.feedback_label = Label(self.quiz_frame, text="", font=("Arial", 14))
+        self.feedback_label.pack(pady=10)
+        
+        Button(self.quiz_frame, text="Submit", command=self.check_answer).pack(pady=5)
+        
+        # SCORE FRAME
+        self.score_frame = Frame(root)
+        self.score_label = Label(self.score_frame, text="", font=("Arial", 18))
+        self.score_label.pack(pady=30)
+        Button(self.score_frame, text="Play Again", command=self.restart).pack()
+        Button(self.score_frame, text="Quit", command=root.quit).pack(pady=10)
+        
+        # Start with menu
+        self.menu_frame.pack()
+
+    def show_difficulty(self):
+        self.menu_frame.pack_forget()
+        self.diff_frame.pack(fill="both", expand=True)
+    
+    def start_quiz(self, difficulty):
+        self.difficulty = difficulty
+        self.score = 0
+        self.question_count = 0
+        self.diff_frame.pack_forget()
+        self.quiz_frame.pack(fill="both", expand=True)
+        self.next_question()
+    
+    def next_question(self):
+        self.question_count += 1
+        self.answer_entry.delete(0, END)
+        self.feedback_label.config(text="")
+        
+        # Generate ranom questions based on difficulty
+        if self.difficulty == "Easy":
+            self.num1 = random.randint(1, 10)
+            self.num2 = random.randint(1, 10)
+            self.operator = "+"
+            self.answer = self.num1 + self.num2
+        elif self.difficulty == "Medium":
+            self.num1 = random.randint(10, 50)
+            self.num2 = random.randint(10, 50)
+            self.operator = "-"
+            self.answer = self.num1 - self.num2
+        else:  # Hard
+            self.num1 = random.randint(10, 20)
+            self.num2 = random.randint(1, 10)
+            self.operator = "*"
+            self.answer = self.num1 * self.num2
+        
+        self.question_label.config(text=f"Q{self.question_count}: {self.num1} {self.operator} {self.num2} = ?")
+    
+    def check_answer(self):
+        try:
+            user_answer = int(self.answer_entry.get())
+        except ValueError:
+            self.feedback_label.config(text="Please enter a valid number!", fg="red")
+            return
+        
+        if user_answer == self.answer:
+            self.score += 1
+            self.feedback_label.config(text="Correct!", fg="green")
+        else:
+            self.feedback_label.config(text=f"Wrong! The answer was {self.answer}", fg="red")
+        
+        if self.question_count >= 5:  # end quiz after 5 questions
+            self.show_score()
+        else:
+            self.root.after(1500, self.next_question)  # wait 1.5 seconds before next question
+    
+    def show_score(self):
+        self.quiz_frame.pack_forget()
+        self.score_label.config(text=f"Your score: {self.score} / {self.question_count}")
+        self.score_frame.pack(fill="both", expand=True)
+    
+    def restart(self):
+        self.score_frame.pack_forget()
+        self.menu_frame.pack()
+
+if __name__ == "__main__":
+    root = Tk()
+    app = MathQuizApp(root)
+    root.mainloop()
